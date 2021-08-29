@@ -1,23 +1,29 @@
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import useStyles from './styles'
 import {Paper,Typography,Button} from '@material-ui/core'
 import FormikControl from './FormikControl'
-import {useDispatch} from 'react-redux'
-import {createPost} from '../../actions/postsAction'
+import {useDispatch,useSelector} from 'react-redux'
+import {createPost,updatePost} from '../../actions/postsAction'
 
 
-const FormComponent = () => {
+const FormComponent = ({currentId,setCurrentId}) => {
+
+    const post = useSelector((state) => currentId ? state.posts.find((p)=> p._id === currentId) : null);
+
+    const [formValues,setFormValues] = useState(null)
+    useEffect(()=>{
+        if(post && currentId)
+        {
+            setFormValues(post)
+        }
+        
+    },[post,currentId])
     const classes = useStyles()
-    const initialValues = {
-        creator:"",
-        title:"",
-        message:"",
-        tags:"",
-        selectedFile:"",
-    };
-
+    
+    
+    
     const dispatch = useDispatch();
 
     // const FILE_SIZE = 160 * 1024;
@@ -27,6 +33,14 @@ const FormComponent = () => {
     //     "image/gif",
     //     "image/png",
     // ];
+
+    const initialValues = {
+        creator:"",
+        title:"",
+        message:"",
+        tags:[],
+        selectedFile:"",
+    };
 
     const validationSchema = Yup.object({
         creator: Yup.string().required("Required !"),
@@ -46,25 +60,36 @@ const FormComponent = () => {
         // ),
     });
 
+
+
     const onSubmit = async (values,onSubmitProps) => {
-        dispatch(createPost(values))
+
+        if(currentId){
+            dispatch(updatePost(currentId,values))
+            handleReset()
+        }else{
+            dispatch(createPost(values))
+        }
         onSubmitProps.setSubmitting(false);
+        onSubmitProps.resetForm();
     };
 
     const handleReset = () =>{
-
+        setCurrentId(null)
+        setFormValues(initialValues)
     }
 
     return (
         
         <Formik
-        initialValues={initialValues}
+        initialValues={formValues || initialValues}
         validationSchema={validationSchema}
+        enableReinitialize
         onSubmit={onSubmit}>
             {(formik) => (
                 <Paper className={classes.paper}>
                     <Form className={`${classes.root} ${classes.form}`}>
-                        <Typography variant='h6'>Creating a memory</Typography>
+                        <Typography variant='h6'>{currentId?'Editing' :'Creating'} a memory</Typography>
                         <FormikControl
                             control='input'
                             name='creator'
@@ -100,9 +125,10 @@ const FormComponent = () => {
                         type="submit" 
                         fullWidth 
                         disabled={!formik.isValid || formik.isSubmitting}>
-                        Create
+                        {currentId?'Update' :'Create'}
                         </Button>
-                        <Button className={classes.buttonSubmit} variant="contained" color='secondary' size="large"  fullWidth onClick={handleReset}>Reset</Button>
+                        {currentId?
+                        <Button className={classes.buttonSubmit} variant="contained" color='secondary' size="large"  fullWidth onClick={handleReset}>Reset</Button>:null}
                     </Form>
                 </Paper>
             )}

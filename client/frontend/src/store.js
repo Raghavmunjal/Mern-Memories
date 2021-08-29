@@ -1,9 +1,11 @@
 import { createStore, combineReducers, applyMiddleware,compose } from 'redux'
 import thunk from 'redux-thunk'
 import {postsReducer} from './reducers/postsReducer'
+import {authReducer} from './reducers/authReducer'
 
 const reducer = combineReducers({
     posts:postsReducer,
+    auth:authReducer,
 })
 
 const intialState = {}

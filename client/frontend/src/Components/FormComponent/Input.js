@@ -2,13 +2,15 @@
 
 import React from "react";
 import { Field, ErrorMessage } from "formik";
-import { TextField } from "@material-ui/core";
+import { TextField,InputAdornment,IconButton } from "@material-ui/core";
 import TextError from "./TextError";
 import useStyles from './styles'
+import Visibility from "@material-ui/icons/Visibility";
+import VisibilityOff from "@material-ui/icons/VisibilityOff";
 
 const Input = (props) => {
   const classes = useStyles()
-  const { type, label, name, ...rest } = props;
+  const { type, label, name,autoFocus,handleShowPassword, ...rest } = props;
 
   return (
     <Field name={name}>
@@ -24,8 +26,18 @@ const Input = (props) => {
               id={name}
               label={label}
               name={name}
+              autoFocus={autoFocus}
               {...rest}
               {...field}
+              InputProps={ name === 'password' ? {
+                endAdornment : (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() =>handleShowPassword}>
+                      {{type} === "password" ? <Visibility/> : <VisibilityOff/>}
+                    </IconButton>
+                  </InputAdornment>
+                )
+              } : null}
             />
             <ErrorMessage name={name} component={TextError} />
           </>
