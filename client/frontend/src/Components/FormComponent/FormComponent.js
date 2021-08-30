@@ -11,6 +11,7 @@ import {createPost,updatePost} from '../../actions/postsAction'
 const FormComponent = ({currentId,setCurrentId}) => {
 
     const post = useSelector((state) => currentId ? state.posts.find((p)=> p._id === currentId) : null);
+    const user = JSON.parse(localStorage.getItem('profile'))
 
     const [formValues,setFormValues] = useState(null)
     useEffect(()=>{
@@ -35,7 +36,6 @@ const FormComponent = ({currentId,setCurrentId}) => {
     // ];
 
     const initialValues = {
-        creator:"",
         title:"",
         message:"",
         tags:[],
@@ -43,7 +43,6 @@ const FormComponent = ({currentId,setCurrentId}) => {
     };
 
     const validationSchema = Yup.object({
-        creator: Yup.string().required("Required !"),
         title: Yup.string().required("Required !"),
         message: Yup.string().required("Required !"),
         // selectedFile: Yup.mixed()
@@ -65,10 +64,10 @@ const FormComponent = ({currentId,setCurrentId}) => {
     const onSubmit = async (values,onSubmitProps) => {
 
         if(currentId){
-            dispatch(updatePost(currentId,values))
+            dispatch(updatePost(currentId,{...values,name:user?.result?.name}))
             handleReset()
         }else{
-            dispatch(createPost(values))
+            dispatch(createPost({...values,name:user?.result?.name}))
         }
         onSubmitProps.setSubmitting(false);
         onSubmitProps.resetForm();
@@ -77,6 +76,16 @@ const FormComponent = ({currentId,setCurrentId}) => {
     const handleReset = () =>{
         setCurrentId(null)
         setFormValues(initialValues)
+    }
+
+    if(!user?.result?.name){
+        return (
+            <Paper className={classes.paper}>
+                <Typography variant="h6" align="center">
+                    Please Sign In to create your own memories and like other's memories
+                </Typography>
+            </Paper>
+        )
     }
 
     return (
@@ -90,12 +99,6 @@ const FormComponent = ({currentId,setCurrentId}) => {
                 <Paper className={classes.paper}>
                     <Form className={`${classes.root} ${classes.form}`}>
                         <Typography variant='h6'>{currentId?'Editing' :'Creating'} a memory</Typography>
-                        <FormikControl
-                            control='input'
-                            name='creator'
-                            label='Creator'
-                            type='text'
-                        />
                         <FormikControl
                             control='input'
                             name='title'

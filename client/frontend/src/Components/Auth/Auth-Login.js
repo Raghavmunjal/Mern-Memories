@@ -7,11 +7,12 @@ import AuthInput from './AuthInput'
 import  LockOutlinedIcon  from '@material-ui/icons/LockOutlined'
 import {GoogleLogin} from 'react-google-login'
 import Icon from './Icon'
-import {useHistory} from 'react-router-dom'
+import {useHistory,Link} from 'react-router-dom'
 import {useDispatch} from 'react-redux'
-import { LOGIN } from '../../constants/AuthConstants';
+import { AUTH } from '../../constants/AuthConstants';
+import {signIn} from '../../actions/authAction'
 
-const Auth = () => {
+const AuthLogin = () => {
 
     const classes = useStyles()
 
@@ -19,24 +20,16 @@ const Auth = () => {
 
     const history = useHistory()
 
-    const [isSignUp,setIsSignUp] = useState(false)
+    
     const [showPassword,setShowPassword] = useState(false)
 
     const initialValues = {
-        firstName:"",
-        lastName:"",
         email:"",
         password:"",
-        confirmPassword:""
     }
     const validationSchema = Yup.object({
-        firstName: Yup.string().required("Required !"),
-        lastName: Yup.string().required("Required !"),
         email: Yup.string().email("Invalid email format").required("Required"),
         password: Yup.string().required("Required").min(8, "Minimun 8 characters"),
-        confirmPassword: Yup.string()
-            .oneOf([Yup.ref("password"), ""], "Confirm Password Must Match Password")
-            .required("Required"),
     });
 
     const googleSuccess = async(res) =>{
@@ -45,7 +38,7 @@ const Auth = () => {
         const token = res?.tokenId;
 
         try {
-            dispatch({ type: LOGIN, data: { result, token } });
+            dispatch({ type: AUTH, data: { result, token } });
             history.push('/')
         } catch (error) {
             console.log(error);
@@ -57,12 +50,10 @@ const Auth = () => {
         console.log("Google Sign In was Unsuccessful. Try Again Later");
     }
 
-    const switchMode = () => {
-        setIsSignUp((prev)=>!prev)
-        handleShowPassword(false)
-    }
 
-    const onSubmit = ( values ) =>{}
+    const onSubmit = ( values ) =>{
+        dispatch(signIn(values,history))
+    }
 
     const handleShowPassword = () => {
         setShowPassword((prev)=>!prev)
@@ -81,22 +72,15 @@ const Auth = () => {
                     <LockOutlinedIcon/>
                 </Avatar>
                 <Typography variant="h5">
-                    {isSignUp ? 'Sign Up' : 'Sign In'}
+                    Sign In
                 </Typography>
                 <Form className={classes.form}>
                     <Grid container spacing={2}>
-                        {isSignUp ?  (
-                            <>
-                            <AuthInput name="firstName" type="text" label="First Name" autoFocus half />
-                            <AuthInput name="lastName" type="text" label="Last Name"  half />
-                            </>
-                        ) : null}
                         <AuthInput name="email" type="email" label="Email Address"  />
                         <AuthInput name="password" type={showPassword ? "text" : "password" } label="Password" handleShowPassword={handleShowPassword}  />
-                        { isSignUp && <AuthInput name="confirmPassword" type={showPassword ? "text" : "password" } label="Confirm Password" handleShowPassword={handleShowPassword}  />}
                     </Grid>
                     <Button type="submit"  variant="contained" fullWidth color="primary" className={classes.submit}>
-                        {isSignUp ? 'Sign Up' : "Sign In" }
+                        Sign In
                     </Button>
                     
                     <GoogleLogin
@@ -121,9 +105,11 @@ const Auth = () => {
 
                     <Grid container justifyContent="flex-end">
                         <Grid item>
-                            <Button className={classes.switch} onClick={switchMode}>
-                            {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up" }
+                            <Link to='/auth/register' className={classes.link}>
+                            <Button className={classes.switch} >
+                                Don't have an account? Sign Up
                             </Button>
+                            </Link>
                         </Grid>
                     </Grid>
                 </Form>
@@ -134,4 +120,4 @@ const Auth = () => {
     )
 }
 
-export default Auth
+export default AuthLogin

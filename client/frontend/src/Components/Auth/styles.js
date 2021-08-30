@@ -31,5 +31,8 @@ export default makeStyles((theme) => ({
   switch:{
     fontSize:"0.77rem",
     textTransform:"uppercase",
+  },
+  link:{
+    textDecoration:"none"
   }
 }));

@@ -6,12 +6,26 @@ const config = {
     },
 };
 
-export const fetchPosts = ()=>axios.get('/posts')
+const API = axios.create({baseUrl: "http://localhost:5000"})
+//export const fetchPosts = ()=>axios.get('/posts')
 
-export const createPost = (newPost) =>axios.post('/posts',newPost,config)
+API.interceptors.request.use((req)=>{
+    if(localStorage.getItem('profile')){
+        req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`
+    }
+    return req;
+})
 
-export const updatePost = (id,updatedPost) => axios.patch(`/posts/${id}`,updatedPost,config)
+export const fetchPosts = ()=>API.get('/posts')
 
-export const deletePost = (id) => axios.delete(`/posts/${id}`);
+export const createPost = (newPost) =>API.post('/posts',newPost,config)
 
-export const likePost = (id) => axios.patch(`/posts/${id}/likePost`)
+export const updatePost = (id,updatedPost) => API.patch(`/posts/${id}`,updatedPost,config)
+
+export const deletePost = (id) => API.delete(`/posts/${id}`);
+
+export const likePost = (id) => API.patch(`/posts/${id}/likePost`)
+
+
+export const signIn = (values) => API.post('/user/signin',values,config) 
+export const signUp = (values) => API.post('/user/signup',values,config) 
