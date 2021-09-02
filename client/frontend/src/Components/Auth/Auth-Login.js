@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useState,useEffect} from 'react'
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { Avatar,Button,Paper,Grid,Typography,Container } from '@material-ui/core'
@@ -8,7 +8,7 @@ import  LockOutlinedIcon  from '@material-ui/icons/LockOutlined'
 import {GoogleLogin} from 'react-google-login'
 import Icon from './Icon'
 import {useHistory,Link} from 'react-router-dom'
-import {useDispatch} from 'react-redux'
+import {useDispatch,useSelector} from 'react-redux'
 import { AUTH } from '../../constants/AuthConstants';
 import {signIn} from '../../actions/authAction'
 
@@ -20,6 +20,14 @@ const AuthLogin = () => {
 
     const history = useHistory()
 
+    const auth = useSelector((state) => state.auth)
+
+    const { userInfo } = auth
+    useEffect(() => {
+        if (userInfo) {
+        history.push('/posts')
+        }
+    }, [history, userInfo])
     
     const [showPassword,setShowPassword] = useState(false)
 

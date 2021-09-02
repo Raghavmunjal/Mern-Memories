@@ -9,6 +9,14 @@ const config = {
 const API = axios.create({baseUrl: "http://localhost:5000"})
 //export const fetchPosts = ()=>axios.get('/posts')
 
+// const config = {
+//     headers: {
+//       'Content-Type': 'application/json',
+//       Authorization: `Bearer ${userInfo.token}`,
+//     },
+//   }
+//   const { data } = await axios.get(`/api/users/${id}`, config)
+
 API.interceptors.request.use((req)=>{
     if(localStorage.getItem('profile')){
         req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`
@@ -16,7 +24,11 @@ API.interceptors.request.use((req)=>{
     return req;
 })
 
-export const fetchPosts = ()=>API.get('/posts')
+export const fetchPosts = (page)=>API.get(`/posts/?page=${page}`)
+
+export const fetchPostById = (id)=>API.get(`/posts/${id}`)
+
+export const fetchPostsBySearch = (searchQuery) => API.get(`/posts/search/?searchQuery=${searchQuery.search || 'none'}&tags=${searchQuery.tags}`)
 
 export const createPost = (newPost) =>API.post('/posts',newPost,config)
 

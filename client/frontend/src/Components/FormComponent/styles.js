@@ -27,7 +27,4 @@ export default makeStyles((theme) => ({
       marginTop: '3px',
       color:"red",
   },
-  input:{
-    
-  }
 }));

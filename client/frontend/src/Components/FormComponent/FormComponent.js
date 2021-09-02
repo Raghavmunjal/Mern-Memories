@@ -6,11 +6,12 @@ import {Paper,Typography,Button} from '@material-ui/core'
 import FormikControl from './FormikControl'
 import {useDispatch,useSelector} from 'react-redux'
 import {createPost,updatePost} from '../../actions/postsAction'
+import {useHistory} from 'react-router-dom';
 
 
 const FormComponent = ({currentId,setCurrentId}) => {
 
-    const post = useSelector((state) => currentId ? state.posts.find((p)=> p._id === currentId) : null);
+    const post = useSelector((state) => currentId ? state.posts.posts.find((p)=> p._id === currentId) : null);
     const user = JSON.parse(localStorage.getItem('profile'))
 
     const [formValues,setFormValues] = useState(null)
@@ -26,6 +27,7 @@ const FormComponent = ({currentId,setCurrentId}) => {
     
     
     const dispatch = useDispatch();
+    const history = useHistory()
 
     // const FILE_SIZE = 160 * 1024;
     // const SUPPORTED_FORMATS = [
@@ -67,7 +69,7 @@ const FormComponent = ({currentId,setCurrentId}) => {
             dispatch(updatePost(currentId,{...values,name:user?.result?.name}))
             handleReset()
         }else{
-            dispatch(createPost({...values,name:user?.result?.name}))
+            dispatch(createPost({...values,name:user?.result?.name},history))
         }
         onSubmitProps.setSubmitting(false);
         onSubmitProps.resetForm();
