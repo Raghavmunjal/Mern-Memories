@@ -2,6 +2,7 @@ export const FETCH_ALL = "FETCH_ALL";
 export const FETCH_BY_SEARCH = "FETCH_BY_SEARCH";
 export const FETCH_POST_BY_ID = "FETCH_POST_BY_ID";
 export const CREATE_POST = "CREATE_POST";
+export const COMMENT_POST = "COMMENT_POST";
 export const LIKE_POST = "LIKE_POST";
 export const UPDATE_POST = "UPDATE_POST";
 export const DELETE_POST = "DELETE_POST";

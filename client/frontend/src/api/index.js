@@ -28,7 +28,8 @@ export const fetchPosts = (page)=>API.get(`/posts/?page=${page}`)
 
 export const fetchPostById = (id)=>API.get(`/posts/${id}`)
 
-export const fetchPostsBySearch = (searchQuery) => API.get(`/posts/search/?searchQuery=${searchQuery.search || 'none'}&tags=${searchQuery.tags}`)
+export const fetchPostsBySearch = (searchQuery) => API.get(`/posts/search?searchQuery=${searchQuery.search || "none"}&tags=${searchQuery.tags}`);
+
 
 export const createPost = (newPost) =>API.post('/posts',newPost,config)
 
@@ -38,6 +39,8 @@ export const deletePost = (id) => API.delete(`/posts/${id}`);
 
 export const likePost = (id) => API.patch(`/posts/${id}/likePost`)
 
+export const comment = (value,id) => API.post(`/posts/${id}/commentPost`,{value})
 
 export const signIn = (values) => API.post('/user/signin',values,config) 
+
 export const signUp = (values) => API.post('/user/signup',values,config) 

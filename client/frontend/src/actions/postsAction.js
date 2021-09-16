@@ -8,7 +8,8 @@ import {
     FETCH_BY_SEARCH,
     START_LOADING,
     END_LOADING,
-    FETCH_POST_BY_ID
+    FETCH_POST_BY_ID,
+    COMMENT_POST
 } from '../constants/PostConstants'
 
 //Action Creators -> that return action
@@ -16,7 +17,6 @@ export const getPosts = (page) => async(dispatch) => {
     try {
         dispatch({type:START_LOADING})
         const {data} = await api.fetchPosts(page);
-        console.log(data);
         // const action = {type:'FETCH_ALL',payload:[]}
         // dispatch(action)
         dispatch({type:FETCH_ALL,payload:data})
@@ -31,8 +31,7 @@ export const getPostsBySearch = (searchQuery) => async(dispatch) => {
     try {
         dispatch({type:START_LOADING})
         const {data : {data}} = await api.fetchPostsBySearch(searchQuery);
-        console.log(data)
-        dispatch({type:FETCH_BY_SEARCH,payload:data})
+        dispatch({type:FETCH_BY_SEARCH,payload:{data}})
         dispatch({type:END_LOADING})
     } catch (error) {
         console.log(error)
@@ -44,8 +43,6 @@ export const getPostById = (id) => async(dispatch) => {
     try {
         dispatch({type:START_LOADING})
         const {data} = await api.fetchPostById(id);
-        console.log(data);
-
         dispatch({type:FETCH_POST_BY_ID,payload:{post:data}})
         dispatch({type:END_LOADING})
     } catch (error) {
@@ -93,6 +90,16 @@ export const likePost = (id) => async(dispatch) => {
         const {data} =await api.likePost(id);
         dispatch({type:LIKE_POST,payload:data})
     } catch (error) {
+        console.log(error)
+    }
+}
+
+export const commentPost = (value,id) => async(dispatch) => {
+    try {
+        const {data} = await api.comment(value,id)
+        dispatch({type:COMMENT_POST,payload:data})
+        return data.comments;
+    }catch (error) {
         console.log(error)
     }
 }

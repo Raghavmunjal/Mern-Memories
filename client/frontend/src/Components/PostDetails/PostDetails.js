@@ -5,6 +5,7 @@ import moment from 'moment'
 import {useHistory,useParams} from 'react-router-dom'
 import useStyles from './styles'
 import { getPostById , getPostsBySearch} from '../../actions/postsAction'
+import CommentSection from './CommentSection'
 
 const PostDetails = () => {
 
@@ -16,13 +17,13 @@ const PostDetails = () => {
 
     useEffect(() => {
         dispatch(getPostById(id));
-    },[id])
+    },[dispatch,id])
 
     useEffect(() => {
-        if(post){
-            getPostsBySearch({search:'none',tags: post?.tags.join(',')})
+        if (post) {
+            dispatch(getPostsBySearch({ search: 'none', tags: post?.tags.join(',') }));
         }
-    },[post])
+    }, [dispatch,post]);
 
 
     if(!post) return null;
@@ -36,7 +37,7 @@ const PostDetails = () => {
     }
 
     const recommendedPosts = posts.filter(({_id})=> _id !== post._id)
-
+    
     const openPost = (_id) => {
         history.push(`/posts/${_id}`)
     }
@@ -52,7 +53,7 @@ const PostDetails = () => {
                 <Divider style={{ margin: '20px 0' }} />
                 <Typography variant="body1"><strong>Realtime Chat - coming soon!</strong></Typography>
                 <Divider style={{ margin: '20px 0' }} />
-                <Typography variant="body1"><strong>Comments - coming soon!</strong></Typography>
+                <CommentSection post={post}/>
                 <Divider style={{ margin: '20px 0' }} />
             </div>
             <div className={classes.imageSection}>
@@ -75,7 +76,7 @@ const PostDetails = () => {
                                     {message}
                                 </Typography>
                                 <Typography variant="subtitle1" gutterBottom>
-                                    {likes.length}
+                                    {likes.length !== 0 ? likes.length : null}
                                 </Typography>
                                 <img src={selectedFile} alt="" width="200px"/>
                             </div>

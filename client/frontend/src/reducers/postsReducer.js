@@ -7,7 +7,8 @@ import {
     FETCH_BY_SEARCH,
     START_LOADING,
     END_LOADING,
-    FETCH_POST_BY_ID
+    FETCH_POST_BY_ID,
+    COMMENT_POST
 } from '../constants/PostConstants'
 
 export const postsReducer = (state={isLoading:true,posts:[]},action) =>{
@@ -21,6 +22,15 @@ export const postsReducer = (state={isLoading:true,posts:[]},action) =>{
         case UPDATE_POST:
         case LIKE_POST:
             return {...state,posts:state.posts.map((post)=>post._id === action.payload._id ? action.payload : post)};
+        case COMMENT_POST :
+            return {
+                ...state,posts:state.posts.map((post) =>{
+                    if(post._id === action.payload._id)
+                    return action.payload
+
+                    return post;
+                })
+            }
         case FETCH_ALL:
             return {
                 ...state,
@@ -29,7 +39,7 @@ export const postsReducer = (state={isLoading:true,posts:[]},action) =>{
                 numberOfPages:action.payload.numberOfPages,
             }
         case FETCH_BY_SEARCH:
-            return {...state, posts:action.payload}
+            return {...state, posts:action.payload.data}
         case FETCH_POST_BY_ID:
             return {...state, post:action.payload.post}
         case CREATE_POST:

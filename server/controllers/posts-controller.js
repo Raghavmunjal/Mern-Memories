@@ -34,7 +34,7 @@ export const getPostById = async(req,res) =>{
 
 export const getPostsBySearch = async(req,res) =>{
 
-    const { searchQuery, tags} = req.query
+    const { searchQuery, tags} = req.query 
 
     try{
         // i -> case insensitive search query
@@ -42,7 +42,8 @@ export const getPostsBySearch = async(req,res) =>{
         const posts = await postsModel.find({ $or:[{title},{tags:{$in : tags.split(',')}}]})
         res.json({data:posts})
     }catch(err){
-        res.status(404).json({message:err.message})
+        console.log(err)
+        res.status(404).json({message:err})
     }
 } 
 
@@ -103,5 +104,15 @@ export const likePost = async(req,res)=>{
 
     const updatedPost = await postsModel.findByIdAndUpdate(id,post,{new:true})
 
+    res.json(updatedPost)
+}
+
+export const commentPost = async(req,res)=>{
+    const {id} = req.params;
+    const {value} = req.body
+
+    const post = await postsModel.findById(id)
+    post.comments.push(value);
+    const updatedPost = await postsModel.findByIdAndUpdate(id,post,{new:true})
     res.json(updatedPost)
 }
